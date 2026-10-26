@@ -205,6 +205,15 @@ new ResizeObserver(updateHeaderOffset).observe(document.querySelector('.topline'
 window.addEventListener('resize', updateHeaderOffset);
 window.addEventListener('scroll', updateHeaderOffset, { passive: true });
 updateHeaderOffset();
+// Initial service links must use the settled header height and font layout.
+if (document.body.dataset.page === 'home' && ['#services', '#wholesale'].includes(window.location.hash)) {
+  window.addEventListener('load', async () => {
+    await document.fonts.ready;
+    if (!['#services', '#wholesale'].includes(window.location.hash)) return;
+    updateHeaderOffset();
+    document.getElementById(window.location.hash.slice(1))?.scrollIntoView({ behavior: 'instant', block: 'start' });
+  }, { once: true });
+}
 function setMenuOpen(open) {
   navigation.classList.toggle('open', open);
   menuToggle.setAttribute('aria-expanded', String(open));
